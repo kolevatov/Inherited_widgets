@@ -1,4 +1,7 @@
+// ignore_for_file: sized_box_for_whitespace
+
 import 'package:flutter/material.dart';
+import 'package:inherited_widgets/fonts.dart';
 import 'package:inherited_widgets/inherited_widget.dart';
 
 void main() => runApp(const MyApp());
@@ -30,7 +33,6 @@ class MyHomePageState extends State<MyHomePage> {
   int get counterValue => _counter;
 
   void _incrementCounter() => setState(() => _counter++);
-  void _decrementCounter() => setState(() => _counter--);
 
   @override
   Widget build(BuildContext context) {
@@ -62,26 +64,23 @@ class AppRootWidget extends StatelessWidget {
     final MyHomePageState rootWidgetState =
         MyInheritedWidget.of(context)!.state;
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(height: 32),
-          const Text('Root Widget',
-              style: TextStyle(color: Colors.black, fontSize: 32)),
-          const SizedBox(height: 4),
-          const Text('holds counter state',
-              style: TextStyle(color: Colors.black, fontSize: 16)),
+        children: [
+          Text(
+            'Root Widget',
+            style: Fonts.h1,
+          ),
+          const SizedBox(height: 8),
+          Text('${rootWidgetState.counterValue}', style: Fonts.h2),
           const SizedBox(height: 16),
-          Text('${rootWidgetState.counterValue}',
-              style: Theme.of(context).textTheme.headline4),
-          const SizedBox(height: 50),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const <Widget>[
-              Counter(),
-              Counter(),
-            ],
+          const ChildWidget(
+            bgColor: Color(0xfff2f2f2),
+            childWidget: ChildWidget(
+                bgColor: Color(0xffbdbdbd),
+                childWidget: ChildWidget(
+                    bgColor: Color(0xff828282), childWidget: SizedBox())),
           ),
         ],
       ),
@@ -89,44 +88,57 @@ class AppRootWidget extends StatelessWidget {
   }
 }
 
-class Counter extends StatelessWidget {
-  const Counter({Key? key}) : super(key: key);
+class ChildWidget extends StatelessWidget {
+  final Widget childWidget;
+  final Color bgColor;
+  const ChildWidget(
+      {Key? key, required this.childWidget, required this.bgColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final rootWidgetState = MyInheritedWidget.of(context)!.state;
     return Card(
-      margin: const EdgeInsets.all(8),
-      color: Colors.yellowAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(height: 16),
-          const Text(
-            'Child Widget',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 14,
+      color: bgColor,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Child Widget',
+                  style: Fonts.bodyDark,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.all(8)),
+                    fixedSize: MaterialStateProperty.all<Size>(
+                        const Size.fromWidth(150)),
+                  ),
+                  onPressed: () => rootWidgetState._incrementCounter(),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text('${rootWidgetState.counterValue}',
+                            style: Fonts.bodyLight),
+                        const Icon(
+                          Icons.add_box,
+                          color: Colors.white,
+                          size: 24,
+                        )
+                      ]),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          Text('${rootWidgetState.counterValue}',
-              style: Theme.of(context).textTheme.headline4),
-          ButtonBar(
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.remove),
-                color: Colors.red,
-                onPressed: () => rootWidgetState._decrementCounter(),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                color: Colors.green,
-                onPressed: () => rootWidgetState._incrementCounter(),
-              ),
-            ],
-          ),
-        ],
+            const SizedBox(
+              height: 50,
+            ),
+            childWidget,
+          ],
+        ),
       ),
     );
   }
