@@ -111,12 +111,16 @@ class ChildWidget extends StatelessWidget {
                   'Child Widget',
                   style: Fonts.bodyDark,
                 ),
+                const SizedBox(
+                  width: 8,
+                ),
                 ElevatedButton(
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
                         const EdgeInsets.all(8)),
-                    fixedSize: MaterialStateProperty.all<Size>(
-                        const Size.fromWidth(150)),
+                    maximumSize: MaterialStateProperty.all<Size>(
+                      const Size.fromWidth(150),
+                    ),
                   ),
                   onPressed: () => rootWidgetState._incrementCounter(),
                   child: Row(
@@ -124,6 +128,9 @@ class ChildWidget extends StatelessWidget {
                       children: [
                         Text('${rootWidgetState.counterValue}',
                             style: Fonts.bodyLight),
+                        const SizedBox(
+                          width: 4,
+                        ),
                         const Icon(
                           Icons.add_box,
                           color: Colors.white,
